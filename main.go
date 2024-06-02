@@ -14,7 +14,7 @@ import (
 
 func main() {
 	//Handle routes here
-	fmt.Println("Starting server on :http://localhost:3000")
+	fmt.Println("Starting server on : http://localhost:3000")
 	router := mux.NewRouter()
 	router.HandleFunc("/v1/account/{name}/{tag}", account.AccountHandler)
 	router.HandleFunc("/v1/hs/{region}/{puuid}", account.HsHandler)
