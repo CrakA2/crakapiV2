@@ -6,8 +6,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
+
+	leaderboard "crakapiV2/leaderboard"
+	winloss "crakapiV2/winloss"
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
@@ -16,6 +20,20 @@ import (
 type Account struct {
 	PUUID  string `json:"puuid"`
 	Region string `json:"region"`
+}
+
+type PlayerData struct {
+	Name        string         `json:"name"`
+	Tag         string         `json:"tag"`
+	PUUID       string         `json:"puuid"`
+	Region      string         `json:"region"`
+	KDA         string         `json:"kda"`
+	RR          RRResponse     `json:"rr"`
+	Leaderboard string         `json:"leaderboard"`
+	WinLoss     winloss.Career `json:"winloss"`
+	Wins        int            `json:"wins"`
+	Losses      int            `json:"losses"`
+	Draws       int            `json:"draws"`
 }
 
 func getAccount(name, tag string) (*Account, error) {
@@ -59,6 +77,56 @@ func getAccount(name, tag string) (*Account, error) {
 	}
 
 	return &response.Data, nil
+}
+
+func GetAllPlayerData(name, tag string) (PlayerData, error) {
+	account, err := getAccount(name, tag)
+	if err != nil {
+		return PlayerData{}, err
+	}
+	fmt.Println(account)
+	response, err := winloss.FetchMatchData(account.Region, account.PUUID)
+	if err != nil {
+		return PlayerData{}, err
+	}
+	//fmt.Println(response)
+
+	kda, err := winloss.CalculateKDA(response)
+	if err != nil {
+		return PlayerData{}, err
+	}
+	fmt.Println(kda)
+
+	rr, err := getRR(account.Region, account.PUUID, os.Getenv("HENRIK_KEY"))
+	if err != nil {
+		return PlayerData{}, err
+	}
+	fmt.Println(rr)
+
+	leaderboard, err := leaderboard.GetLeaderboard(account.Region, account.PUUID)
+	if err != nil {
+		// Log the error and continue with the default value
+		log.Println(err)
+	}
+	fmt.Println(leaderboard)
+	var modes []string
+	career, wins, losses, draws := winloss.CalculateWinsLosses(response, modes)
+	fmt.Println(career, wins, losses, draws)
+
+	playerData := PlayerData{
+		Name:        name,
+		Tag:         tag,
+		PUUID:       account.PUUID,
+		Region:      account.Region,
+		KDA:         kda,
+		RR:          *rr,
+		Leaderboard: leaderboard,
+		WinLoss:     career,
+		Wins:        wins,
+		Losses:      losses,
+		Draws:       draws,
+	}
+	return playerData, nil
 }
 
 func AccountHandler(w http.ResponseWriter, r *http.Request) { // Exported function

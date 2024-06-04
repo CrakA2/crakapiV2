@@ -21,7 +21,7 @@ type Data struct {
 	Leaderboard Leaderboard `json:"leaderboard"`
 }
 
-func getLeaderboard(region, puuid string) (string, error) {
+func GetLeaderboard(region, puuid string) (string, error) {
 	err := godotenv.Load()
 	if err != nil {
 		return "", fmt.Errorf("error loading .env file: %w", err)
@@ -74,13 +74,12 @@ func getLeaderboard(region, puuid string) (string, error) {
 
 	return leaderboardRank, nil
 }
-
 func Handler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	region := vars["region"]
 	puuid := vars["puuid"]
 
-	response, err := getLeaderboard(region, puuid)
+	response, err := GetLeaderboard(region, puuid)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

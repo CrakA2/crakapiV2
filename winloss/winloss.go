@@ -43,7 +43,7 @@ type Career struct {
 	Record []string
 }
 
-func calculateWinsLosses(response Response, modes []string) (Career, int, int, int) {
+func CalculateWinsLosses(response Response, modes []string) (Career, int, int, int) {
 	wins := 0
 	losses := 0
 	draws := 0
@@ -135,7 +135,7 @@ func reverseSlice(slice []string) []string {
 	return slice
 }
 
-func fetchMatchData(region, puuid string) (Response, error) {
+func FetchMatchData(region, puuid string) (Response, error) {
 	err := godotenv.Load()
 	if err != nil {
 		return Response{}, fmt.Errorf("error loading .env file: %v", err)
@@ -178,13 +178,13 @@ func WLHandler(w http.ResponseWriter, r *http.Request) {
 	modes := r.URL.Query()["mode"]
 	format := r.URL.Query().Get("fs")
 
-	response, err := fetchMatchData(region, puuid)
+	response, err := FetchMatchData(region, puuid)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	career, wins, losses, draws := calculateWinsLosses(response, modes)
+	career, wins, losses, draws := CalculateWinsLosses(response, modes)
 
 	if format == "json" {
 		result := map[string]interface{}{
@@ -197,7 +197,7 @@ func WLHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(result)
 	} else {
-		result := fmt.Sprintf("Player has won %d matches and lost %d matches.", wins, losses)
+		result := fmt.Sprintf("has won %d matches and lost %d matches.", wins, losses)
 		if draws > 0 {
 			result += fmt.Sprintf(" %d matches were draw.", draws)
 		}
@@ -213,18 +213,18 @@ func KDAHandler(w http.ResponseWriter, r *http.Request) {
 	region := vars["region"]
 	puuid := vars["puuid"]
 
-	response, err := fetchMatchData(region, puuid)
+	response, err := FetchMatchData(region, puuid)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	KDA, _ := calculateKDA(response)
+	KDA, _ := CalculateKDA(response)
 	result := fmt.Sprintf("%v", KDA)
 	fmt.Fprint(w, result)
 }
 
-func calculateKDA(response Response) (string, error) {
+func CalculateKDA(response Response) (string, error) {
 	if len(response.Data) == 0 {
 		return "", fmt.Errorf("no data available")
 	}
