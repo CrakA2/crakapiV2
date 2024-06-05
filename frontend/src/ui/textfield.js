@@ -3,7 +3,7 @@ import { Button } from "./button"
 
 export function Textfield(props) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 w-full px-1">
       <div className="bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-md flex-1 text-gray-900 dark:text-gray-100">
         {props.link}
       </div>

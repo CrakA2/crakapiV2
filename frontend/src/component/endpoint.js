@@ -18,7 +18,7 @@ export function Endpoint(props) {
         </h3>
         <div className=" text-lg ">
           <p>
-            Puuid: {data.puuid} Region: {data.region} !command add !commandname then endpoints
+            Puuid: {data.puuid} Region: {data.region} <br />!command add !commandname then endpoints
           </p>
           <p>KDA: {data.kda}</p>
           <Textfield link={`$(urlfetch ${url}/kd/${region}/${puuid})`} />
@@ -53,7 +53,7 @@ export function Endpoint(props) {
         </h3>
         <div className=" text-lg ">
           <p>
-            Puuid: {data.puuid} Region: {data.region} Use !command add !commandname then endpoints
+            Puuid: {data.puuid} Region: {data.region} <br /> Use !command add !commandname then endpoints
           </p>
           <p>KDA: {data.kda}</p>
           <Textfield link={`\${urlfetch ${url}/kd/${region}/${puuid}}`} />
@@ -88,7 +88,7 @@ export function Endpoint(props) {
         </h3>
         <div className=" text-lg ">
           <p>
-            Puuid: {data.puuid} Region: {data.region} !command add !commandname then endpoints
+            Puuid: {data.puuid} Region: {data.region} <br /> !command add !commandname then endpoints
           </p>
           <p>KDA: {data.kda}</p>
           <Textfield link={`$(urlfetch ${url}/kd/${region}/${puuid})`} />
