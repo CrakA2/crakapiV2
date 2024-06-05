@@ -133,11 +133,16 @@ func reverseSlice(slice []string) []string {
 }
 
 func FetchMatchData(region, puuid string) (Response, error) {
+	fmt.Println("Fetching match data")
+	fmt.Println(region, puuid)
 	err := godotenv.Load()
 	if err != nil {
 		return Response{}, fmt.Errorf("error loading .env file: %v", err)
 	}
 	apiKey := os.Getenv("HENRIK_KEY")
+	if apiKey == "" {
+		return Response{}, fmt.Errorf("HENRIK_KEY environment variable not set")
+	}
 
 	url := fmt.Sprintf("https://api.henrikdev.xyz/valorant/v1/by-puuid/lifetime/matches/%s/%s", region, puuid)
 
@@ -164,7 +169,7 @@ func FetchMatchData(region, puuid string) (Response, error) {
 	if err != nil {
 		return Response{}, fmt.Errorf("error decoding response: %w", err)
 	}
-
+	fmt.Println("response")
 	return response, nil
 }
 
@@ -172,7 +177,10 @@ func WLHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	region := vars["region"]
 	puuid := vars["puuid"]
-	modes := r.URL.Query()["mode"]
+	var modes []string
+	if modeValues, ok := r.URL.Query()["mode"]; ok {
+		modes = modeValues
+	}
 	format := r.URL.Query().Get("fs")
 
 	response, err := FetchMatchData(region, puuid)

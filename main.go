@@ -39,7 +39,7 @@ func main() {
 	router.HandleFunc("/v1/rr/{region}/{puuid}", account.RrHandler)
 	router.HandleFunc("/v1/lb/{region}/{puuid}", leaderboard.Handler)
 	router.HandleFunc("/v1/all/{name}/{tag}", AllDataHandler)
-	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("./frontend/build/"))))
+	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("./build/"))))
 
 	log.Fatal(http.ListenAndServe(":3000", router))
 }
