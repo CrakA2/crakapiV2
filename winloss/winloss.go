@@ -71,28 +71,25 @@ func CalculateWinsLosses(response Response, modes []string) (Career, int, int, i
 		if len(modes) > 0 && !modeSet[strings.ToLower(match.Meta.Mode)] {
 			continue
 		}
+		// If the current match is more than 2 hours newer than the next match, break the loop
+		if i < len(response.Data)-1 {
+			prevMatchStartedAt, err := time.Parse(time.RFC3339, response.Data[i+1].Meta.StartedAt)
+			if err != nil {
+				continue
+			}
+			// Calculate the time difference between the current and next match
+			timeDifference := matchStartedAt.Sub(prevMatchStartedAt)
 
+			if timeDifference > 2*time.Hour {
+				fmt.Println("Current match is more than 2 hours newer than the next match. Breaking the loop.")
+				break
+			}
+		}
 		if match.Meta.Mode == "Deathmatch" || match.Meta.Mode == "Custom" || match.Meta.Mode == "Team Deathmatch" {
 			continue
 		}
 
 		// Check if the first match in the list is more than 6 hours old
-
-		// If the current match is more than 2 hours newer than the next match, break the loop
-		if i < len(response.Data)-1 {
-			nextMatchStartedAt, err := time.Parse(time.RFC3339, response.Data[i+1].Meta.StartedAt)
-			if err != nil {
-				continue
-			}
-
-			// Calculate the time difference between the current and next match
-			timeDifference := matchStartedAt.Sub(nextMatchStartedAt)
-
-			if timeDifference > 3*time.Hour {
-				//fmt.Println("Current match is more than 3 hours newer than the next match. Breaking the loop.")
-				break
-			}
-		}
 
 		playerTeam := match.Stats.Team
 		if match.Teams.Red == nil || match.Teams.Blue == nil {
