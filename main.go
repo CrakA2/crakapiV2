@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	leaderboard "crakapiV2/leaderboard"
+	radiant "crakapiV2/radiant"
 	account "crakapiV2/v1"
 	winloss "crakapiV2/winloss"
 
@@ -39,6 +40,7 @@ func main() {
 	router.HandleFunc("/v1/rr/{region}/{puuid}", account.RrHandler)
 	router.HandleFunc("/v1/lb/{region}/{puuid}", leaderboard.Handler)
 	router.HandleFunc("/v1/all/{name}/{tag}", AllDataHandler)
+	router.HandleFunc("/v1/lbr/{region}/{puuid}", radiant.MMRHandler)
 	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("./build/"))))
 
 	log.Fatal(http.ListenAndServe(":3000", router))
