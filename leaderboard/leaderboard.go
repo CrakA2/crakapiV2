@@ -46,8 +46,9 @@ func GetLeaderboard(region, puuid string) (string, error) {
 		return "", fmt.Errorf("error making request: %w", err)
 	}
 	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode == http.StatusNotFound {
+		return "Player Not Found", nil
+	} else if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
@@ -69,7 +70,6 @@ func GetLeaderboard(region, puuid string) (string, error) {
 	if len(response.Data) == 0 {
 		return "Player Not Found", nil
 	}
-
 	leaderboardRank := strconv.Itoa(response.Data[0].LeaderboardRank)
 
 	return leaderboardRank, nil
