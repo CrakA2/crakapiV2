@@ -67,7 +67,7 @@ func GetLeaderboard(region, puuid string) (string, error) {
 	}
 
 	if len(response.Data) == 0 {
-		return "", fmt.Errorf("no data found in response")
+		return "Player Not Found", nil
 	}
 
 	leaderboardRank := strconv.Itoa(response.Data[0].LeaderboardRank)

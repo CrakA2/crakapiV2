@@ -111,7 +111,7 @@ func main() {
 	router.HandleFunc("/v1/wl/{region}/{puuid}", CacheHandler(wrapHandler(winloss.WLHandler, "text/plain"))).Methods("GET")
 	router.HandleFunc("/v1/kd/{region}/{puuid}", CacheHandler(wrapHandler(winloss.KDAHandler, "text/plain"))).Methods("GET")
 	router.HandleFunc("/v1/rr/{region}/{puuid}", CacheHandler(wrapHandler(account.RrHandler, "text/plain"))).Methods("GET") // Assuming text/plain for demonstration
-	router.HandleFunc("/v1/lb/{region}/{puuid}", CacheHandler(wrapHandler(leaderboard.Handler, "application/json"))).Methods("GET")
+	router.HandleFunc("/v1/lb/{region}/{puuid}", CacheHandler(wrapHandler(leaderboard.Handler, "text/plain"))).Methods("GET")
 	router.HandleFunc("/v1/all/{name}/{tag}", AllDataHandler)
 	router.HandleFunc("/v1/lbr/{region}/{puuid}", CacheHandler(wrapHandler(radiant.MMRHandler, "text/plain"))).Methods("GET")
 
